@@ -52,7 +52,7 @@ func naiveThreadedPrimalityTest(n int) bool {
 	// results.
 	totalResult := false
 	for _, resultChan := range results {
-		result <- resultChan
+		result := <-resultChan
 		totalResult = totalResult || result
 	}
 	return !totalResult
