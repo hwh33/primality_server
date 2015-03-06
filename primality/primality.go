@@ -8,12 +8,12 @@ package primality
 
 import "math"
 
-func IsPrime(n) bool {
+func IsPrime(n int) bool {
 	// return naivePrimalityTest(n)
-	return naiveThreadedTest()
+	return naiveThreadedPrimalityTest(n)
 }
 
-func naiveThreadedTest(n) bool {
+func naiveThreadedPrimalityTest(n int) bool {
 
 	// This was chosen arbitrarily, but it wouldn't take too much testing to
 	// determine the true optimum number.
@@ -28,7 +28,8 @@ func naiveThreadedTest(n) bool {
 	// We check to see if any number from 3 to (n/2) is a factor of n. We do
 	// this by giving each thread operationsPerThread numbers to check until we
 	// run out.
-	results := make([]chan bool)
+	numThreads := (((n / 2) - 3) / 2) + 1
+	results := make([]chan bool, numThreads)
 	currentChannelNumber := 0
 	startRange := 3
 	endRange := startRange + operationsPerThread
@@ -42,7 +43,7 @@ func naiveThreadedTest(n) bool {
 	}
 	// Hit the rest of the range.
 	results[currentChannelNumber] = make(chan bool)
-	go factorExistsInRange(
+	go factorExistsWrapper(
 		startRange, (n / 2), n, results[currentChannelNumber])
 
 	// Now wait for all of our goroutines to finish and get the result.
