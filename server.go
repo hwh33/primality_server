@@ -118,7 +118,7 @@ func displayError(w http.ResponseWriter, r *http.Request, errorMsg string) {
 }
 
 func main() {
-	address := "localhost:3000"
+	address := ":80"
 
 	fmt.Println("Creating registrar file")
 	var err error
