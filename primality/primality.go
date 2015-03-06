@@ -6,7 +6,10 @@ Only logged-in users should have access to this package.
 
 package primality
 
-import "math"
+import (
+	"fmt"
+	"math"
+)
 
 func IsPrime(n int) bool {
 	// return naivePrimalityTest(n)
@@ -28,12 +31,14 @@ func naiveThreadedPrimalityTest(n int) bool {
 	// We check to see if any number from 3 to (n/2) is a factor of n. We do
 	// this by giving each thread operationsPerThread numbers to check until we
 	// run out.
+	fmt.Println("Beginning primality test for n = " + string(n))
 	numThreads := (((n / 2) - 3) / 2) + 1
 	results := make([]chan bool, numThreads)
 	currentChannelNumber := 0
 	startRange := 3
 	endRange := startRange + operationsPerThread
 	for endRange < (n / 2) {
+		fmt.Println("Creating goroutine " + string(currentChannelNumber))
 		results[currentChannelNumber] = make(chan bool)
 		go factorExistsWrapper(
 			startRange, endRange, n, results[currentChannelNumber])
@@ -42,6 +47,7 @@ func naiveThreadedPrimalityTest(n int) bool {
 		endRange = startRange + operationsPerThread
 	}
 	// Hit the rest of the range.
+	fmt.Println("Creating goroutine " + string(currentChannelNumber))
 	results[currentChannelNumber] = make(chan bool)
 	go factorExistsWrapper(
 		startRange, (n / 2), n, results[currentChannelNumber])
@@ -51,9 +57,11 @@ func naiveThreadedPrimalityTest(n int) bool {
 	// one factor of n. So our result is the converse of the logical OR of all
 	// results.
 	totalResult := false
-	for _, resultChan := range results {
+	fmt.Println("Collecting results")
+	for i, resultChan := range results {
 		result := <-resultChan
 		totalResult = totalResult || result
+		fmt.Println("Result " + string(i) + " received")
 	}
 	return !totalResult
 }
