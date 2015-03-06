@@ -9,5 +9,8 @@ func main() {
 	m.Get("/", func() string {
 		return "Hello world!"
 	})
+	m.Get("/secretmessage", func() string {
+		return "Hey bitch face"
+	})
 	m.Run()
 }
