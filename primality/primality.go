@@ -45,6 +45,9 @@ func naiveThreadedTest(n, numThreads int) bool {
 	}
 	// get the rest
 	go factorExistsInRange(a, (n / 2), n)
+
+	// make compiler happy for now
+	return false
 }
 
 func naivePrimalityTest(n int) bool {
