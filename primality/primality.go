@@ -38,8 +38,8 @@ func naiveThreadedPrimalityTest(n int) bool {
 		go factorExistsWrapper(
 			startRange, endRange, n, results[currentChannelNumber])
 		currentChannelNumber++
-		startRange := endRange + 2
-		endRange := startRange + operationsPerThread
+		startRange = endRange + 2
+		endRange = startRange + operationsPerThread
 	}
 	// Hit the rest of the range.
 	results[currentChannelNumber] = make(chan bool)
