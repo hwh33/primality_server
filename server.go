@@ -36,8 +36,9 @@ func entryPointHandler(w http.ResponseWriter, r *http.Request) {
 	} else if userType == "returning" {
 		http.ServeFile(w, r, "html/login.html")
 	} else {
-		fmt.Println("Error: undefined user type: [" + userType + "]")
-		http.NotFound(w, r)
+		http.ServeFile(w, r, "html/entrypoint.html")
+		// fmt.Println("Error: undefined user type: [" + userType + "]")
+		// http.NotFound(w, r)
 	}
 }
 
@@ -98,7 +99,7 @@ func primalityTestHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	isPrime := primality.IsPrime(input)
+	isPrime := primality.IsPrime(input, 1)
 	if isPrime {
 		fmt.Fprintf(w, inputString+" is prime.")
 	} else {
