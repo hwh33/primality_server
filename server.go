@@ -99,7 +99,7 @@ func primalityTestHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	isPrime := primality.IsPrime(input, 1)
+	isPrime := primality.IsPrime(input)
 	if isPrime {
 		fmt.Fprintf(w, inputString+" is prime.")
 	} else {
