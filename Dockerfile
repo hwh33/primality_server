@@ -1,6 +1,7 @@
 FROM golang:1.4.1-onbuild
 
-export GOPATH=~/go
-mkdir $GOPATH/{src,bin,pkg}
+RUN go get github.com/hwh33/primality_server
 
-ADD . $GOPATH/src
+EXPOSE 8080
+CMD []
+ENTRYPOINT ["/gopath/bin/primality_server"]

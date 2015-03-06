@@ -8,8 +8,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"./primality"
-	"./registrar"
+	"github.com/hwh33/primality_server/primality"
+	"github.com/hwh33/primality_server/registrar"
 )
 
 const debug = true
