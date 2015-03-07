@@ -9,6 +9,7 @@ package primality
 import (
 	"fmt"
 	"math"
+	"strconv" //debugging
 )
 
 func IsPrime(n int) bool {
@@ -31,9 +32,10 @@ func naiveThreadedPrimalityTest(n int) bool {
 	// We check to see if any number from 3 to (n/2) is a factor of n. We do
 	// this by giving each thread operationsPerThread numbers to check until we
 	// run out.
-	fmt.Println("Beginning primality test for n = " + string(n))
+	fmt.Println("Beginning primality test for n = " + strconv.Itoa(n))
 	numThreads := (((n / 2) - 3) / 2) + 1
 	results := make([]chan bool, numThreads)
+	fmt.Println(strconv.Itoa(numThreads) + " channels created for results")
 	currentChannelNumber := 0
 	startRange := 3
 	endRange := startRange + operationsPerThread
@@ -47,7 +49,7 @@ func naiveThreadedPrimalityTest(n int) bool {
 		endRange = startRange + operationsPerThread
 	}
 	// Hit the rest of the range.
-	fmt.Println("Creating goroutine " + string(currentChannelNumber))
+	fmt.Println("Creating goroutine " + strconv.Itoa(currentChannelNumber))
 	results[currentChannelNumber] = make(chan bool)
 	go factorExistsWrapper(
 		startRange, (n / 2), n, results[currentChannelNumber])
@@ -61,7 +63,7 @@ func naiveThreadedPrimalityTest(n int) bool {
 	for i, resultChan := range results {
 		result := <-resultChan
 		totalResult = totalResult || result
-		fmt.Println("Result " + string(i) + " received")
+		fmt.Println("Result " + strconv.Itoa(i) + " received")
 	}
 	return !totalResult
 }
