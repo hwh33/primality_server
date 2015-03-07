@@ -12,12 +12,12 @@ import (
 	"strconv" //debugging
 )
 
-func IsPrime(n int) bool {
+func IsPrime(n uint64) bool {
 	// return naivePrimalityTest(n)
 	return naiveThreadedPrimalityTest(n)
 }
 
-func naiveThreadedPrimalityTest(n int) bool {
+func naiveThreadedPrimalityTest(n uint64) bool {
 
 	// This was chosen arbitrarily, but it wouldn't take too much testing to
 	// determine the true optimum number.
@@ -32,24 +32,25 @@ func naiveThreadedPrimalityTest(n int) bool {
 	// We check to see if any number from 3 to (n/2) is a factor of n. We do
 	// this by giving each thread operationsPerThread numbers to check until we
 	// run out.
-	fmt.Println("Beginning primality test for n = " + strconv.Itoa(n))
-	numThreads := (((n / 2) - 3) / 2) + 1
-	results := make([]chan bool, numThreads)
-	fmt.Println(strconv.Itoa(numThreads) + " channels created for results")
-	currentChannelNumber := 0
-	startRange := 3
-	endRange := startRange + operationsPerThread
+	fmt.Println("Beginning primality test for n = " + strconv.FormatUint(n, 10))
+	// numThreads := int(math.Ceil(((float64(n) / 2) - 3) / (2 * 50)))
+	results := make([]chan bool, 1)
+	// fmt.Println(strconv.Itoa(numThreads) + " channels created for results")
+	var startRange uint64 = 3
+	var endRange uint64 = startRange + operationsPerThread
+	var currentChannelNumber uint64 = 0
+	results[currentChannelNumber] = make(chan bool)
 	for endRange < (n / 2) {
-		fmt.Println("Creating goroutine " + string(currentChannelNumber))
-		results[currentChannelNumber] = make(chan bool)
+		// fmt.Println("Creating goroutine " + string(currentChannelNumber))
 		go factorExistsWrapper(
 			startRange, endRange, n, results[currentChannelNumber])
 		currentChannelNumber++
 		startRange = endRange + 2
-		endRange = startRange + operationsPerThread
+		endRange = startRange + (operationsPerThread * 2)
+		results = append(results, make(chan bool))
 	}
 	// Hit the rest of the range.
-	fmt.Println("Creating goroutine " + strconv.Itoa(currentChannelNumber))
+	fmt.Println("Creating goroutine " + strconv.FormatUint(currentChannelNumber, 10))
 	results[currentChannelNumber] = make(chan bool)
 	go factorExistsWrapper(
 		startRange, (n / 2), n, results[currentChannelNumber])
@@ -59,23 +60,25 @@ func naiveThreadedPrimalityTest(n int) bool {
 	// one factor of n. So our result is the converse of the logical OR of all
 	// results.
 	totalResult := false
-	fmt.Println("Collecting results")
-	for i, resultChan := range results {
+	fmt.Println("Collecting results from " + strconv.Itoa(len(results)) + " goroutines")
+	for _, resultChan := range results {
 		result := <-resultChan
 		totalResult = totalResult || result
-		fmt.Println("Result " + strconv.Itoa(i) + " received")
+		// fmt.Println("Result " + strconv.FormatUint(uint64(i), 10) + " received")
 	}
+	fmt.Println("Done")
 	return !totalResult
 }
 
-func naivePrimalityTest(n int) bool {
+func naivePrimalityTest(n uint64) bool {
 	// Test for trivial cases.
 	if n < 4 || divides(2, n) {
 		return false
 	}
 
 	// Test every odd number from 3 to n / 2.
-	for i := 3; i < (n / 2); i += 2 {
+	var i uint64
+	for i = 3; i < (n / 2); i += 2 {
 		if divides(i, n) {
 			return false
 		}
@@ -86,7 +89,7 @@ func naivePrimalityTest(n int) bool {
 }
 
 /* Check if any odd numbers from a to b divide n. Assumes a and b are odd. */
-func factorExistsInRange(a, b, n int) bool {
+func factorExistsInRange(a, b, n uint64) bool {
 	for i := a; i <= b; i += 2 {
 		if divides(i, n) {
 			return true
@@ -98,11 +101,11 @@ func factorExistsInRange(a, b, n int) bool {
 /* A wrapper for factorExistsInRange which allows us to store the result in a
  * channel.
  */
-func factorExistsWrapper(a, b, n int, channel chan bool) {
+func factorExistsWrapper(a, b, n uint64, channel chan bool) {
 	channel <- factorExistsInRange(a, b, n)
 }
 
 /* Returns true if x divides y. */
-func divides(x, y int) bool {
+func divides(x, y uint64) bool {
 	return math.Mod(float64(y), float64(x)) == 0
 }

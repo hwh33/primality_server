@@ -10,6 +10,8 @@ import (
 
 	"github.com/hwh33/primality_server/primality"
 	"github.com/hwh33/primality_server/registrar"
+	// "./primality"
+	// "./registrar"
 )
 
 const debug = true
@@ -92,7 +94,8 @@ func primalityTestHandler(w http.ResponseWriter, r *http.Request) {
 		displayError(w, r, "No input detected")
 		return
 	}
-	input, err := strconv.Atoi(inputString)
+	base, bitsize := 10, 64
+	input, err := strconv.ParseUint(inputString, base, bitsize)
 	if err != nil {
 		fmt.Println("Error processing user input: " + err.Error())
 		displayError(w, r, "Input must be an integer")
@@ -118,7 +121,7 @@ func displayError(w http.ResponseWriter, r *http.Request, errorMsg string) {
 }
 
 func main() {
-	address := ":80"
+	address := "localhost:3000"
 
 	fmt.Println("Creating registrar file")
 	var err error
