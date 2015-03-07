@@ -25,7 +25,9 @@ func naiveThreadedPrimalityTest(n uint64) bool {
 	const operationsPerThread = 50
 
 	// Test for trivial cases.
-	if n < 4 || divides(2, n) {
+	if n < 4 {
+		return true
+	} else if divides(2, n) {
 		return false
 	}
 
