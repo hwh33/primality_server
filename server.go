@@ -14,6 +14,7 @@ import (
 	// "./registrar"
 )
 
+const address = ":80"
 const debug = true
 
 var serverRegistrar *registrar.Registrar
@@ -121,7 +122,6 @@ func displayError(w http.ResponseWriter, r *http.Request, errorMsg string) {
 }
 
 func main() {
-	address := "localhost:3000"
 
 	fmt.Println("Creating registrar file")
 	var err error
@@ -138,4 +138,5 @@ func main() {
 	http.HandleFunc("/primality_test", primalityTestHandler)
 
 	http.ListenAndServe(address, nil)
+
 }
