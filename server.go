@@ -14,7 +14,7 @@ import (
 	// "./registrar"
 )
 
-const address = "localhost:3000"
+const address = ":8080"
 const debug = true
 
 var serverRegistrar *registrar.Registrar
